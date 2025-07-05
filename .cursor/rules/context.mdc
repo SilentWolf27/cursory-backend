@@ -1,0 +1,89 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Rules for cursory
+
+Cursory is a personal web application designed to organize and structure technical knowledge into well-defined courses and learning roadmaps. It focuses on topics such as robotics, MATLAB, embedded systems, programming, software, and artificial intelligence — allowing for the structured documentation of mastered subjects.
+
+The core purpose of Cursory is to serve as a personal knowledge repository for quick reference, while also laying the foundation for future mentorship or guided learning opportunities.
+
+## Tech Stack
+
+The backend for Cursory is built using the following technologies:
+
+- Runtime: Node.js 22
+- Framework: Express
+- Language: TypeScript
+- Database: PostgreSQL
+- ORM: Prisma
+- Authentication: JWT with Passport
+- Data Validation: Zod
+- Api Documentation: Swagger OpenAPI
+- Hosting: Railway
+
+## Project Structure
+
+- The src/ folder should reflect business concepts, not technical layers.
+
+
+```bash
+/src
+  /courses
+  /modules
+  /lessons
+  /roadmaps
+```
+
+- Each domain module should include its own layered structure:
+
+```bash
+/courses
+  /domain
+  /application
+  /infrastructure
+  /interfaces
+```
+
+## Layer Responsibilities
+
+| Layer             | Responsibilities                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| `domain/`         | Entities, core business logic, pure interfaces. No dependencies outside this layer. |
+| `application/`    | Use cases, orchestration logic, commands, queries, services.                        |
+| `infrastructure/` | Database access (e.g. Prisma), controllers, JWT, external services.                 |
+| `interface/`      | Input/output data structures (DTOs), validation (Zod), HTTP adapters.               |
+
+## Global Code Style Rules
+
+- TypeScript must be used throughout the entire codebase.
+- Use camelCase for variables, functions, and methods.
+- Use PascalCase for classes, enums, interfaces, and types.
+- Use UPPER_SNAKE_CASE for global constants (e.g. MAX_LENGTH)
+- Use 2-space indentation and double quotes (").
+- Group imports in the following order:
+    - Node.js built-ins
+    - External packages
+    - Absolute imports from src/
+    - Relative imports (./, ../)
+
+## File & Folder Naming
+
+- File and folder names must use kebab-case (e.g. course-controller.ts).
+- Each file should ideally export one main class or function.
+
+##  Architectural Rules
+
+- No business logic in controllers. Controllers should only call use cases.
+- No inward dependencies. domain/ and application/ must not import anything from infrastructure/ or interface/.
+- Prisma models must not be used directly in the domain layer.
+- All input validation is handled at the interface/ layer using Zod schemas.
+- Business rules must live in pure, testable code in the domain/ layer.
+
+## Comments and Documentation
+
+- Use JSDoc-style comments (/** */) for exported functions, classes, and interfaces.
+- Write comments in English.
+
+- Avoid redundant comments — code should be self-explanatory whenever possible.
