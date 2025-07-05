@@ -30,6 +30,6 @@ The backend for Cursory is built using the following technologies:
 - Database: PostgreSQL
 - ORM: Prisma
 - Authentication: JWT with Passport
-- Data Validation: Zod
+- Data Validation: Express OpenAPI Validator
 - Api Documentation: Swagger OpenAPI
 - Hosting: Railway

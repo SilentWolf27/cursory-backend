@@ -1,0 +1,145 @@
+openapi: 3.1.1
+info:
+  title: Cursory API
+  description: API for Cursory - Personal knowledge repository for technical courses and learning roadmaps
+  version: 1.0.0
+  contact:
+    name: Pedro David Juarez Leyva
+    email: 97pedro@live.com.mx
+servers:
+  - url: http://localhost:3000
+    description: Local server for development
+paths:
+  /courses:
+    post:
+      summary: Create a new course
+      description: Create a new course with the given information
+      operationId: createCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCourse"
+      responses:
+        "201":
+          description: Course created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+    get:
+      summary: Get all courses
+      description: Get all courses
+      operationId: getAllCourses
+      responses:
+        "200":
+          description: Courses fetched successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Course"
+  /courses/{id}:
+    get:
+      summary: Get a course by ID
+      description: Get a course by ID
+      operationId: getCourseById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Course fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+components:
+  schemas:
+    CreateCourse:
+      type: object
+      required:
+        - title
+        - description
+        - slug
+        - visibility
+      properties:
+        title:
+          type: string
+          description: The title of the course
+          example: "C Programming for embedded systems"
+        description:
+          type: string
+          description: A concise description of the course content
+          example: "This course is designed to teach you the basics of C programming for embedded systems. You will learn how to write C code for microcontrollers and embedded systems."
+        slug:
+          type: string
+          description: A unique identifier for the course (used in the URL)
+          example: "c-programming-for-embedded-systems"
+        visibility:
+          type: string
+          description: The visibility of the course used to control who can see the course
+          enum:
+            - public
+            - private
+          example: "public"
+        tags:
+          type: array
+          default: []
+          items:
+            type: string
+            description: A tag for the course used to categorize the course
+            example: "embedded"
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the course
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          description: The title of the course
+          example: "C Programming for embedded systems"
+        description:
+          type: string
+          description: A concise description of the course content
+          example: "This course is designed to teach you the basics of C programming for embedded systems. You will learn how to write C code for microcontrollers and embedded systems."
+        slug:
+          type: string
+          description: A unique identifier for the course (used in the URL)
+          example: "c-programming-for-embedded-systems"
+        tags:
+          type: array
+          items:
+            type: string
+            description: A tag for the course used to categorize the course
+            example: "embedded"
+        visibility:
+          type: string
+          description: The visibility of the course used to control who can see the course
+          enum:
+            - public
+            - private
+          example: "public"
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time the course was created
+          example: "2025-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: The last time the course was updated
+          example: "2025-01-01T00:00:00Z"
+        deletedAt:
+          type: string
+          nullable: true
+          format: date-time
+          description: The date and time the course was deleted
+          example: null

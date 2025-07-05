@@ -19,7 +19,7 @@ The backend for Cursory is built using the following technologies:
 - Database: PostgreSQL
 - ORM: Prisma
 - Authentication: JWT with Passport
-- Data Validation: Zod
+- Data Validation: Express Open API Validator
 - Api Documentation: Swagger OpenAPI
 - Hosting: Railway
 
@@ -85,5 +85,11 @@ The backend for Cursory is built using the following technologies:
 
 - Use JSDoc-style comments (/** */) for exported functions, classes, and interfaces.
 - Write comments in English.
-
 - Avoid redundant comments — code should be self-explanatory whenever possible.
+
+## OpenAPI Usage
+
+- API documentation must live in a dedicated folder: /openapi or /docs.
+- OpenAPI should be kept in YAML or JSON format (preferably YAML).
+
+- Use tools like swagger-ui-express to serve it in development.
