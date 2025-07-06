@@ -3,6 +3,10 @@ import { swaggerConfig } from "./config/swagger";
 import * as OpenApiValidator from "express-openapi-validator";
 import path from "path";
 import YAML from "yamljs";
+import {
+  errorHandler,
+  notFoundHandler,
+} from "./commons/error/error-middleware";
 
 const app = express();
 const PORT = 3000;
@@ -24,6 +28,9 @@ app.use(
 app.get("/", (_req, res) => {
   res.json({ message: "Cursory Backend is running" });
 });
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

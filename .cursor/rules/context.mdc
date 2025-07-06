@@ -62,6 +62,7 @@ The backend for Cursory is built using the following technologies:
 - Use PascalCase for classes, enums, interfaces, and types.
 - Use UPPER_SNAKE_CASE for global constants (e.g. MAX_LENGTH)
 - Use 2-space indentation and double quotes (").
+- Never use barrel files.
 - Group imports in the following order:
     - Node.js built-ins
     - External packages
