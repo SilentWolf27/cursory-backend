@@ -92,7 +92,6 @@ components:
           type: string
           description: The email of the user
           example: "john.doe@example.com"
-    Login:
     Error:
       type: object
       properties:

@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { ErrorFactory } from "./error-factory";
+import { ErrorFactory, AppError } from "./error-factory";
 
 export const errorHandler = (
   err: any,
@@ -8,9 +8,14 @@ export const errorHandler = (
   _next: NextFunction
 ) => {
   console.error("Error:", err.message);
+
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json(err.toResponse());
+    return;
+  }
+
   const errorResponse = ErrorFactory.fromExpressError(err);
-  const statusCode = err.status || err.statusCode || 500;
-  res.status(statusCode).json(errorResponse);
+  res.status(errorResponse.statusCode).json(errorResponse);
 };
 
 export const notFoundHandler = (req: Request, res: Response) => {

@@ -7,6 +7,7 @@ import {
   errorHandler,
   notFoundHandler,
 } from "./commons/error/error-middleware";
+import { registerRoutes } from "./router";
 
 const app = express();
 const PORT = 3000;
@@ -28,6 +29,8 @@ app.use(
 app.get("/", (_req, res) => {
   res.json({ message: "Cursory Backend is running" });
 });
+
+registerRoutes(app);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

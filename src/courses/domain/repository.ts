@@ -1,4 +1,4 @@
-import { Course } from "./course";
+import { Course } from "./entity";
 
 /**
  * Abstract interface for course repository operations
@@ -34,10 +34,11 @@ export interface CourseRepository {
 
   /**
    * Updates an existing course in the repository
-   * @param course - The course entity with updated data
+   * @param id - The course ID to update
+   * @param data - Partial course data to update
    * @returns Promise resolving to the updated course
    */
-  update(course: Course): Promise<Course>;
+  update(id: string, data: Partial<Course>): Promise<Course>;
 
   /**
    * Deletes a course from the repository
