@@ -34,23 +34,25 @@ The backend for Cursory is built using the following technologies:
 
 - The src/ folder should reflect business concepts, not technical layers.
 
-
 ```bash
 /src
-  /courses
-  /modules
-  /lessons
-  /roadmaps
+  /commons          # Shared utilities, error handling, middleware
+  /courses          # Course domain module
+  /modules          # Module domain module (future)
+  /lessons          # Lesson domain module (future)
+  /roadmaps         # Roadmap domain module (future)
+  /router.ts        # Centralized route registration
+  /index.ts         # App configuration and middleware setup
 ```
 
 - Each domain module should include its own layered structure:
 
 ```bash
 /courses
-  /domain
-  /application
-  /infrastructure
-  /interfaces
+  /domain           # Entities, business logic, repository interfaces
+  /application      # Use cases, orchestration logic
+  /infrastructure   # Database access, controllers, external services
+  /interfaces       # DTOs, API contracts (if needed)
 ```
 
 ## Layer Responsibilities
@@ -76,6 +78,11 @@ The backend for Cursory is built using the following technologies:
     - Absolute imports from src/
     - Relative imports (./, ../)
 
+## Programming Style Preferences
+
+- **Use Cases**: Prefer functional programming style with pure functions.
+- **Controllers**: Keep minimal, only orchestrate use cases and handle HTTP concerns.
+
 ## File & Folder Naming
 
 - File and folder names must use kebab-case (e.g. course-controller.ts).
@@ -88,6 +95,14 @@ The backend for Cursory is built using the following technologies:
 - Prisma models must not be used directly in the domain layer.
 - All input validation is handled using express-openapi-validator.
 - Business rules must live in pure, testable code in the domain/ layer.
+- Use centralized route registration in `router.ts` for all application routes.
+- Implement repository pattern with generic base repository for common CRUD operations.
+
+## Error Handling
+
+- Use centralized error management with `ErrorFactory` and `AppError` classes.
+- All errors should be created through `ErrorFactory` for consistency.
+- Business logic should throw `AppError` instances, not generic errors.
 
 ## Comments and Documentation
 
