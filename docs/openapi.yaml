@@ -103,6 +103,10 @@ components:
           type: string
           description: The error message
           example: "Validation failed: title: Title is required"
+        statusCode:
+          type: number
+          description: The HTTP status code
+          example: 400
 paths:
   /courses:
     post:
@@ -122,6 +126,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Course"
+        "409":
+          description: Course with the provided slug already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                    example: "CONFLICT"
+                  error:
+                    type: string
+                    description: The error message
+                    example: "Course with the provided slug already exists"
+                  statusCode:
+                    type: number
+                    description: The HTTP status code
+                    example: 409
+        "400":
+          description: One or more fields of the request body are missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                    example: "VALIDATION_ERROR"
+                  error:
+                    type: string
+                    description: The error message
+                    example: "Validation failed: title: Title is required"
+                  statusCode:
+                    type: number
+                    description: The HTTP status code
+                    example: 400
     get:
       summary: Get all courses
       description: Get all courses
