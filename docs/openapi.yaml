@@ -9,56 +9,6 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local server for development
-paths:
-  /courses:
-    post:
-      summary: Create a new course
-      description: Create a new course with the given information
-      operationId: createCourse
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateCourse"
-      responses:
-        "201":
-          description: Course created successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Course"
-    get:
-      summary: Get all courses
-      description: Get all courses
-      operationId: getAllCourses
-      responses:
-        "200":
-          description: Courses fetched successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Course"
-  /courses/{id}:
-    get:
-      summary: Get a course by ID
-      description: Get a course by ID
-      operationId: getCourseById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Course fetched successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Course"
 components:
   schemas:
     CreateCourse:
@@ -127,19 +77,80 @@ components:
             - public
             - private
           example: "public"
-        createdAt:
+    User:
+      type: object
+      properties:
+        id:
           type: string
-          format: date-time
-          description: The date and time the course was created
-          example: "2025-01-01T00:00:00Z"
-        updatedAt:
+          description: The unique identifier for the user
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
           type: string
-          format: date-time
-          description: The last time the course was updated
-          example: "2025-01-01T00:00:00Z"
-        deletedAt:
+          description: The name of the user
+          example: "John Doe"
+        email:
           type: string
-          nullable: true
-          format: date-time
-          description: The date and time the course was deleted
-          example: null
+          description: The email of the user
+          example: "john.doe@example.com"
+    Login:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+          example: "VALIDATION_ERROR"
+        error:
+          type: string
+          description: The error message
+          example: "Validation failed: title: Title is required"
+paths:
+  /courses:
+    post:
+      summary: Create a new course
+      description: Create a new course with the given information
+      operationId: createCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCourse"
+      responses:
+        "201":
+          description: Course created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+    get:
+      summary: Get all courses
+      description: Get all courses
+      operationId: getAllCourses
+      responses:
+        "200":
+          description: Courses fetched successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Course"
+  /courses/{id}:
+    get:
+      summary: Get a course by ID
+      description: Get a course by ID
+      operationId: getCourseById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Course fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"

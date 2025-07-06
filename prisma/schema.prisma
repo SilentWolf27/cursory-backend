@@ -1,0 +1,38 @@
+// ===========================================
+// PRISMA CONFIGURATION (GENERAL)
+// ===========================================
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ===========================================
+// DOMAIN MODELS
+// ===========================================
+
+// Course Domain Models
+model Course {
+    id          String     @id @default(cuid())
+    title       String     @db.VarChar(255)
+    description String     @db.Text
+    slug        String     @unique @db.VarChar(100)
+    visibility  Visibility @default(PRIVATE)
+    tags        String[]   @default([])
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+    deletedAt   DateTime?
+
+    @@map("courses")
+}
+
+// Course Domain Enums
+enum Visibility {
+    PUBLIC
+    PRIVATE
+}

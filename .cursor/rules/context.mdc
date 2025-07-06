@@ -23,6 +23,13 @@ The backend for Cursory is built using the following technologies:
 - Api Documentation: Swagger OpenAPI
 - Hosting: Railway
 
+## General Rules
+
+- **Never make unsolicited changes.**
+- **Never push all changes at once.**
+- For each step, **clearly explain what is being changed and why**, then **describe what the next step will be**, and **wait for my confirmation before proceeding**.
+
+
 ## Project Structure
 
 - The src/ folder should reflect business concepts, not technical layers.
@@ -53,7 +60,7 @@ The backend for Cursory is built using the following technologies:
 | `domain/`         | Entities, core business logic, pure interfaces. No dependencies outside this layer. |
 | `application/`    | Use cases, orchestration logic, commands, queries, services.                        |
 | `infrastructure/` | Database access (e.g. Prisma), controllers, JWT, external services.                 |
-| `interface/`      | Input/output data structures (DTOs), validation (Zod), HTTP adapters.               |
+| `interface/`      | Input/output data structures (DTOs), types and interfaces            |
 
 ## Global Code Style Rules
 
@@ -79,7 +86,7 @@ The backend for Cursory is built using the following technologies:
 - No business logic in controllers. Controllers should only call use cases.
 - No inward dependencies. domain/ and application/ must not import anything from infrastructure/ or interface/.
 - Prisma models must not be used directly in the domain layer.
-- All input validation is handled at the interface/ layer using Zod schemas.
+- All input validation is handled using express-openapi-validator.
 - Business rules must live in pure, testable code in the domain/ layer.
 
 ## Comments and Documentation
