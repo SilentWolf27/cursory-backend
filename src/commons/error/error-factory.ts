@@ -25,7 +25,7 @@ export class AppError extends Error {
 }
 
 export class ErrorFactory {
-  static validationError(err: any): AppError {
+  static validation(err: any): AppError {
     const details = err.errors
       ?.map((e: any) => `${e.path}: ${e.message}`)
       .join(", ");
@@ -36,47 +36,47 @@ export class ErrorFactory {
     );
   }
 
-  static notFoundError(message: string = "Resource not found"): AppError {
+  static notFound(message: string = "Resource not found"): AppError {
     return new AppError(message, "NOT_FOUND", 404);
   }
 
-  static unauthorizedError(message: string = "Unauthorized"): AppError {
+  static unauthorized(message: string = "Unauthorized"): AppError {
     return new AppError(message, "UNAUTHORIZED", 401);
   }
 
-  static forbiddenError(message: string = "Forbidden"): AppError {
+  static forbidden(message: string = "Forbidden"): AppError {
     return new AppError(message, "FORBIDDEN", 403);
   }
 
-  static badRequestError(message: string): AppError {
+  static badRequest(message: string): AppError {
     return new AppError(message, "BAD_REQUEST", 400);
   }
 
-  static internalError(message: string = "Internal server error"): AppError {
+  static internal(message: string = "Internal server error"): AppError {
     return new AppError(message, "INTERNAL_ERROR", 500);
   }
 
-  static databaseError(message: string = "Database error"): AppError {
+  static database(message: string = "Database error"): AppError {
     return new AppError(message, "DATABASE_ERROR", 500);
   }
 
-  static conflictError(message: string): AppError {
+  static conflict(message: string): AppError {
     return new AppError(message, "CONFLICT", 409);
   }
 
   static fromExpressError(err: any): ErrorResponse {
     const status = err.status || err.statusCode;
 
-    if (status === 400) return this.validationError(err).toResponse();
+    if (status === 400) return this.validation(err).toResponse();
 
-    if (status === 401) return this.unauthorizedError(err.message).toResponse();
+    if (status === 401) return this.unauthorized(err.message).toResponse();
 
-    if (status === 403) return this.forbiddenError(err.message).toResponse();
+    if (status === 403) return this.forbidden(err.message).toResponse();
 
-    if (status === 404) return this.notFoundError(err.message).toResponse();
+    if (status === 404) return this.notFound(err.message).toResponse();
 
-    if (status === 409) return this.conflictError(err.message).toResponse();
+    if (status === 409) return this.conflict(err.message).toResponse();
 
-    return this.internalError(err.message).toResponse();
+    return this.internal(err.message).toResponse();
   }
 }
