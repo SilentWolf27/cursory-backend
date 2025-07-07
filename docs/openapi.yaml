@@ -110,6 +110,10 @@ components:
             - public
             - private
           example: "public"
+        userId:
+          type: string
+          description: The unique identifier for the user who owns the course
+          example: "123e4567-e89b-12d3-a456-426614174000"
     User:
       type: object
       properties:
