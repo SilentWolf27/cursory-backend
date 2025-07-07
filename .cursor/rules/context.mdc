@@ -18,7 +18,7 @@ The backend for Cursory is built using the following technologies:
 - Language: TypeScript
 - Database: PostgreSQL
 - ORM: Prisma
-- Authentication: JWT with Passport
+- Authentication: JWT with cookie-based tokens
 - Data Validation: Express Open API Validator
 - Api Documentation: Swagger OpenAPI
 - Hosting: Railway
@@ -36,6 +36,7 @@ The backend for Cursory is built using the following technologies:
 
 ```bash
 /src
+  /auth             # Authentication domain module
   /commons          # Shared utilities, error handling, middleware
   /courses          # Course domain module
   /modules          # Module domain module (future)
@@ -96,7 +97,7 @@ The backend for Cursory is built using the following technologies:
 - All input validation is handled using express-openapi-validator.
 - Business rules must live in pure, testable code in the domain/ layer.
 - Use centralized route registration in `router.ts` for all application routes.
-- Implement repository pattern with generic base repository for common CRUD operations.
+- Implement repository pattern with specific repositories for each domain entity.
 
 ## Error Handling
 
