@@ -16,6 +16,39 @@ datasource db {
 // DOMAIN MODELS
 // ===========================================
 
+// User Domain Models
+model User {
+    id        String   @id @default(cuid())
+    name      String   @db.VarChar(255)
+    email     String   @unique @db.VarChar(255)
+    password  String   @db.VarChar(255)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    deletedAt DateTime?
+
+    // Relations
+    courses Course[]
+    refreshTokens RefreshToken[]
+
+    @@map("users")
+}
+
+// Token Domain Models
+model RefreshToken {
+    id        String   @id @default(cuid())
+    token     String   @unique @db.VarChar(500)
+    expiresAt DateTime
+    isRevoked Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Relations
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("refresh_tokens")
+}
+
 // Course Domain Models
 model Course {
     id          String     @id @default(cuid())
@@ -27,6 +60,10 @@ model Course {
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
     deletedAt   DateTime?
+
+    // Relations
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@map("courses")
 }

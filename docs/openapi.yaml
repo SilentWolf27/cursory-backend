@@ -9,6 +9,11 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local server for development
+tags:
+  - name: courses
+    description: Course management
+  - name: authentication
+    description: Authentication related endpoints
 components:
   schemas:
     CreateCourse:
@@ -41,6 +46,34 @@ components:
         tags:
           type: array
           default: []
+          items:
+            type: string
+            description: A tag for the course used to categorize the course
+            example: "embedded"
+    UpdateCourse:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the course
+          example: "Advanced C Programming for embedded systems"
+        description:
+          type: string
+          description: A concise description of the course content
+          example: "This advanced course covers advanced C programming techniques for embedded systems."
+        slug:
+          type: string
+          description: A unique identifier for the course (used in the URL)
+          example: "advanced-c-programming-for-embedded-systems"
+        visibility:
+          type: string
+          description: The visibility of the course used to control who can see the course
+          enum:
+            - public
+            - private
+          example: "public"
+        tags:
+          type: array
           items:
             type: string
             description: A tag for the course used to categorize the course
@@ -92,6 +125,28 @@ components:
           type: string
           description: The email of the user
           example: "john.doe@example.com"
+    AccessToken:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT access token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        expiresIn:
+          type: number
+          description: Token expiration time in seconds
+          example: 3600
+    RefreshToken:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT refresh token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        expiresIn:
+          type: number
+          description: Token expiration time in seconds
+          example: 604800
     Error:
       type: object
       properties:
@@ -107,12 +162,108 @@ components:
           type: number
           description: The HTTP status code
           example: 400
+  securitySchemes:
+    AccessToken:
+      type: apiKey
+      in: cookie
+      name: accessToken
+      description: JWT access token stored in HTTP-only cookie
+    RefreshToken:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+      description: JWT refresh token stored in HTTP-only cookie
 paths:
+  /auth/login:
+    post:
+      summary: Login user
+      description: Authenticate user and return access and refresh tokens
+      operationId: login
+      tags:
+        - authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  description: User password
+                  example: "password123"
+      responses:
+        "200":
+          description: Login successful. Access and refresh tokens are set as HTTP-only cookies.
+          headers:
+            Set-Cookie:
+              description: Authentication cookies
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - "accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict; Max-Age=3600"
+                  - "refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict; Max-Age=604800"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/session:
+    get:
+      summary: Get current session
+      description: Get the current user session data from the access token
+      operationId: getSession
+      tags:
+        - authentication
+      security:
+        - AccessToken: []
+      responses:
+        "200":
+          description: Session data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                  isAuthenticated:
+                    type: boolean
+                    description: Whether the user is authenticated
+                    example: true
+        "401":
+          description: Invalid or expired access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /courses:
     post:
       summary: Create a new course
       description: Create a new course with the given information
       operationId: createCourse
+      tags:
+        - courses
+      security:
+        - AccessToken: []
       requestBody:
         required: true
         content:
@@ -168,6 +319,10 @@ paths:
       summary: Get all courses
       description: Get all courses
       operationId: getAllCourses
+      tags:
+        - courses
+      security:
+        - AccessToken: []
       responses:
         "200":
           description: Courses fetched successfully
@@ -177,17 +332,29 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Course"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /courses/{id}:
     get:
       summary: Get a course by ID
       description: Get a course by ID
       operationId: getCourseById
+      tags:
+        - courses
+      security:
+        - AccessToken: []
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
       responses:
         "200":
           description: Course fetched successfully
@@ -195,3 +362,111 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Course"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a course
+      description: Update an existing course by ID
+      operationId: updateCourse
+      tags:
+        - courses
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCourse"
+      responses:
+        "200":
+          description: Course updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        "400":
+          description: One or more fields of the request body are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Course with the provided slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a course
+      description: Delete a course by ID
+      operationId: deleteCourse
+      tags:
+        - courses
+      security:
+        - AccessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        "204":
+          description: Course deleted successfully
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
