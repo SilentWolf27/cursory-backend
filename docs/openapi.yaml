@@ -125,6 +125,16 @@ components:
           type: string
           description: The email of the user
           example: "john.doe@example.com"
+        createdAt:
+          type: string
+          format: date-time
+          description: User creation timestamp
+          example: "2024-01-01T00:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: User last update timestamp
+          example: "2024-01-01T00:00:00.000Z"
     AccessToken:
       type: object
       properties:
@@ -245,12 +255,84 @@ paths:
                 properties:
                   user:
                     $ref: "#/components/schemas/User"
-                  isAuthenticated:
-                    type: boolean
-                    description: Whether the user is authenticated
-                    example: true
+                  session:
+                    type: object
+                    properties:
+                      isAuthenticated:
+                        type: boolean
+                        description: Whether the user is authenticated
+                        example: true
+                      lastActivity:
+                        type: string
+                        format: date-time
+                        description: Last activity timestamp
+                        example: "2024-01-01T12:00:00.000Z"
         "401":
           description: Invalid or expired access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Generate a new access token using a valid refresh token
+      operationId: refreshToken
+      tags:
+        - authentication
+      security:
+        - RefreshToken: []
+      responses:
+        "200":
+          description: Access token refreshed successfully. New access token is set as HTTP-only cookie.
+          headers:
+            Set-Cookie:
+              description: New access token cookie
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - "accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict; Max-Age=3600"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+                    example: "Token refreshed successfully"
+        "401":
+          description: Invalid, expired, or revoked refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/logout:
+    post:
+      summary: Logout user
+      description: Revoke refresh token and clear authentication cookies
+      operationId: logout
+      tags:
+        - authentication
+      security:
+        - AccessToken: []
+        - RefreshToken: []
+      responses:
+        "200":
+          description: Logout successful. Authentication cookies are cleared.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+                    example: "Logged out successfully"
+        "401":
+          description: Invalid or missing authentication tokens
           content:
             application/json:
               schema:
