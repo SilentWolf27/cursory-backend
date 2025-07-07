@@ -78,7 +78,7 @@ export async function handleLogin(req: Request, res: Response): Promise<void> {
  */
 export async function handleLogout(req: Request, res: Response): Promise<void> {
   const user = req.user as User;
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies["refreshToken"];
 
   if (!refreshToken) throw ErrorFactory.unauthorized("No refresh token found");
 
@@ -108,8 +108,6 @@ export async function handleGetSession(
       id: user.id,
       name: user.name,
       email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
     },
     session: {
       isAuthenticated: true,
@@ -127,7 +125,7 @@ export async function handleRefresh(
   req: Request,
   res: Response
 ): Promise<void> {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req.cookies["refreshToken"];
 
   if (!refreshToken)
     throw ErrorFactory.unauthorized("Refresh token is required");

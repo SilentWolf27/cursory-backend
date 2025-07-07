@@ -13,7 +13,7 @@ export async function authMiddleware(
   next: NextFunction
 ): Promise<void> {
   try {
-    const accessToken = req.cookies.accessToken;
+    const accessToken = req.cookies["accessToken"];
 
     if (!accessToken)
       throw ErrorFactory.unauthorized("Access token is required");

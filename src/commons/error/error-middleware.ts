@@ -19,7 +19,7 @@ export const errorHandler = (
 };
 
 export const notFoundHandler = (req: Request, res: Response) => {
-  const errorResponse = ErrorFactory.notFoundError(
+  const errorResponse = ErrorFactory.notFound(
     `Route ${req.originalUrl} not found`
   );
   res.status(404).json(errorResponse);

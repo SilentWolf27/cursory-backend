@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import { swaggerConfig } from "./config/swagger";
 import { serverConfig } from "./config/environment";
 import * as OpenApiValidator from "express-openapi-validator";
@@ -14,6 +15,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const apiSpec = YAML.load(path.join(__dirname, "../docs/openapi.yaml"));
 app.use("/docs", swaggerConfig.serve, swaggerConfig.setup);
