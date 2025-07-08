@@ -63,9 +63,29 @@ model Course {
     // Relations
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    modules Module[]
 
     @@unique([slug, deletedAt])
     @@map("courses")
+}
+
+// Module Domain Models
+model Module {
+    id          String   @id @default(cuid())
+    title       String   @db.VarChar(255)
+    description String   @db.Text
+    order       Int
+    objectives  String[] @default([])
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    deletedAt   DateTime?
+
+    // Relations
+    courseId String
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+    @@unique([courseId, order, deletedAt])
+    @@map("modules")
 }
 
 // Course Domain Enums
