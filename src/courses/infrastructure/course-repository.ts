@@ -10,9 +10,6 @@ const COURSE_SELECT = {
   tags: true,
   visibility: true,
   userId: true,
-  createdAt: true,
-  updatedAt: true,
-  deletedAt: true,
 } as const;
 
 /**

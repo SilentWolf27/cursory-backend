@@ -66,9 +66,9 @@ export async function handleGetCourses(
     userId: user.id,
   };
 
-  const { courses } = await getCoursesUseCase(request, courseRepository);
+  const response = await getCoursesUseCase(request, courseRepository);
 
-  res.status(200).json(courses);
+  res.status(200).json(response);
 }
 
 /**

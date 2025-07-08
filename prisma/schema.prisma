@@ -53,7 +53,7 @@ model Course {
     id          String     @id @default(cuid())
     title       String     @db.VarChar(255)
     description String     @db.Text
-    slug        String     @unique @db.VarChar(100)
+    slug        String     @db.VarChar(100)
     visibility  Visibility @default(PRIVATE)
     tags        String[]   @default([])
     createdAt   DateTime   @default(now())
@@ -64,6 +64,7 @@ model Course {
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+    @@unique([slug, deletedAt])
     @@map("courses")
 }
 

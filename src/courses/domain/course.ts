@@ -6,9 +6,6 @@ export interface Course {
   tags: string[];
   visibility: "PUBLIC" | "PRIVATE";
   userId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date | null;
 }
 
 export interface CreateCourseData {
@@ -35,7 +32,7 @@ export interface UpdateCourseData {
  */
 export function createCourse(
   data: CreateCourseData
-): Omit<Course, "id" | "createdAt" | "updatedAt"> {
+): Omit<Course, "id"> {
   return {
     title: data.title,
     description: data.description,
@@ -55,7 +52,7 @@ export function createCourse(
 export function updateCourse(
   course: Course,
   data: UpdateCourseData
-): Omit<Course, "id" | "createdAt" | "updatedAt"> {
+): Omit<Course, "id"> {
   return {
     title: data.title ?? course.title,
     description: data.description ?? course.description,

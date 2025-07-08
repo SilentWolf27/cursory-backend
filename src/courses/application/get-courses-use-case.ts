@@ -23,5 +23,7 @@ export async function getCoursesUseCase(
 
   const courses = await courseRepository.findByUserId(userId);
 
-  return { courses };
+  return {
+    courses,
+  };
 }

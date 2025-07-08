@@ -12,6 +12,8 @@ servers:
 tags:
   - name: courses
     description: Course management
+  - name: modules
+    description: Module management within courses
   - name: authentication
     description: Authentication related endpoints
 components:
@@ -40,9 +42,9 @@ components:
           type: string
           description: The visibility of the course used to control who can see the course
           enum:
-            - public
-            - private
-          example: "public"
+            - PUBLIC
+            - PRIVATE
+          example: "PUBLIC"
         tags:
           type: array
           default: []
@@ -69,9 +71,9 @@ components:
           type: string
           description: The visibility of the course used to control who can see the course
           enum:
-            - public
-            - private
-          example: "public"
+            - PUBLIC
+            - PRIVATE
+          example: "PUBLIC"
         tags:
           type: array
           items:
@@ -107,13 +109,109 @@ components:
           type: string
           description: The visibility of the course used to control who can see the course
           enum:
-            - public
-            - private
-          example: "public"
+            - PUBLIC
+            - PRIVATE
+          example: "PUBLIC"
         userId:
           type: string
           description: The unique identifier for the user who owns the course
           example: "123e4567-e89b-12d3-a456-426614174000"
+        modules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Module"
+          description: List of modules in this course, ordered by their position
+    CreateModule:
+      type: object
+      required:
+        - title
+        - description
+        - order
+        - courseId
+      properties:
+        title:
+          type: string
+          description: The title of the module
+          example: "Introduction to C Programming"
+        description:
+          type: string
+          description: A concise description of the module content
+          example: "This module covers the fundamentals of C programming language including variables, data types, and basic syntax."
+        order:
+          type: integer
+          description: The order of the module within the course (1-based)
+          minimum: 1
+          example: 1
+        courseId:
+          type: string
+          description: The unique identifier of the course this module belongs to
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        objectives:
+          type: array
+          items:
+            type: string
+            description: Learning objectives for this module
+          example:
+            - "Understand basic C syntax"
+            - "Learn about variables and data types"
+            - "Write simple C programs"
+    UpdateModule:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the module
+          example: "Advanced C Programming Concepts"
+        description:
+          type: string
+          description: A concise description of the module content
+          example: "This module covers advanced C programming concepts including pointers, memory management, and data structures."
+        order:
+          type: integer
+          description: The order of the module within the course (1-based)
+          minimum: 1
+          example: 2
+        objectives:
+          type: array
+          items:
+            type: string
+            description: Learning objectives for this module
+          example:
+            - "Master pointer concepts"
+            - "Understand memory management"
+            - "Implement data structures"
+    Module:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the module
+          example: "456e7890-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          description: The title of the module
+          example: "Introduction to C Programming"
+        description:
+          type: string
+          description: A concise description of the module content
+          example: "This module covers the fundamentals of C programming language including variables, data types, and basic syntax."
+        order:
+          type: integer
+          description: The order of the module within the course (1-based)
+          example: 1
+        courseId:
+          type: string
+          description: The unique identifier of the course this module belongs to
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        objectives:
+          type: array
+          items:
+            type: string
+            description: Learning objectives for this module
+          example:
+            - "Understand basic C syntax"
+            - "Learn about variables and data types"
+            - "Write simple C programs"
     User:
       type: object
       properties:
@@ -405,9 +503,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Course"
+                type: object
+                properties:
+                  courses:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Course"
         "401":
           description: Unauthorized - Invalid or missing access token
           content:
@@ -542,6 +643,207 @@ paths:
                 $ref: "#/components/schemas/Error"
         "404":
           description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courses/{courseId}/modules:
+    post:
+      summary: Create a new module
+      description: Create a new module within a specific course
+      operationId: createModule
+      tags:
+        - modules
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateModule"
+      responses:
+        "201":
+          description: Module created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+        "400":
+          description: One or more fields of the request body are missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courses/{courseId}/modules/{moduleId}:
+    get:
+      summary: Get a module by ID
+      description: Get a specific module within a course
+      operationId: getModuleById
+      tags:
+        - modules
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the module
+            example: "456e7890-e89b-12d3-a456-426614174000"
+      responses:
+        "200":
+          description: Module fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course or module not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a module
+      description: Update an existing module within a course
+      operationId: updateModule
+      tags:
+        - modules
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the module
+            example: "456e7890-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateModule"
+      responses:
+        "200":
+          description: Module updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Module"
+        "400":
+          description: One or more fields of the request body are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course or module not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a module
+      description: Delete a module from a course
+      operationId: deleteModule
+      tags:
+        - modules
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the module
+            example: "456e7890-e89b-12d3-a456-426614174000"
+      responses:
+        "204":
+          description: Module deleted successfully
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course or module not found
           content:
             application/json:
               schema:
