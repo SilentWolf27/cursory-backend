@@ -4,9 +4,10 @@ export interface ModuleRepository {
   /**
    * Create a new module
    * @param data - Module creation data
+   * @param courseId - Course ID
    * @returns Created module
    */
-  create(data: CreateModuleData): Promise<Module>;
+  create(data: CreateModuleData, courseId: string): Promise<Module>;
 
   /**
    * Find module by ID

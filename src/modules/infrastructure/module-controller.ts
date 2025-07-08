@@ -43,7 +43,6 @@ export async function handleCreateModule(
       description,
       order,
       objectives,
-      courseId,
     },
     userId: user.id,
     courseId,

@@ -1,4 +1,5 @@
 import { Module } from "../../modules/domain/module";
+import { Resource } from "../../resources/domain/resource";
 
 export interface Course {
   id: string;
@@ -9,6 +10,7 @@ export interface Course {
   visibility: "PUBLIC" | "PRIVATE";
   userId: string;
   modules?: Module[];
+  resources?: Resource[];
 }
 
 export interface CreateCourseData {

@@ -14,6 +14,8 @@ tags:
     description: Course management
   - name: modules
     description: Module management within courses
+  - name: resources
+    description: Resource management within courses
   - name: authentication
     description: Authentication related endpoints
 components:
@@ -121,13 +123,17 @@ components:
           items:
             $ref: "#/components/schemas/Module"
           description: List of modules in this course, ordered by their position
+        resources:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resource"
+          description: List of resources in this course
     CreateModule:
       type: object
       required:
         - title
         - description
         - order
-        - courseId
       properties:
         title:
           type: string
@@ -142,10 +148,6 @@ components:
           description: The order of the module within the course (1-based)
           minimum: 1
           example: 1
-        courseId:
-          type: string
-          description: The unique identifier of the course this module belongs to
-          example: "123e4567-e89b-12d3-a456-426614174000"
         objectives:
           type: array
           items:
@@ -227,6 +229,93 @@ components:
           type: string
           description: The email of the user
           example: "john.doe@example.com"
+    CreateResource:
+      type: object
+      required:
+        - title
+        - type
+        - url
+      properties:
+        title:
+          type: string
+          description: The title of the resource
+          example: "C Programming Tutorial PDF"
+        description:
+          type: string
+          description: A description of the resource
+          example: "Complete guide to C programming with examples and exercises"
+        type:
+          type: string
+          description: The type of resource
+          enum:
+            - PDF
+            - VIDEO
+            - LINK
+            - DOCUMENT
+            - IMAGE
+          example: "PDF"
+        url:
+          type: string
+          description: URL or path to the resource
+          example: "https://example.com/c-programming-guide.pdf"
+    UpdateResource:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the resource
+          example: "Advanced C Programming Tutorial PDF"
+        description:
+          type: string
+          description: A description of the resource
+          example: "Advanced guide to C programming with advanced concepts"
+        type:
+          type: string
+          description: The type of resource
+          enum:
+            - PDF
+            - VIDEO
+            - LINK
+            - DOCUMENT
+            - IMAGE
+          example: "PDF"
+        url:
+          type: string
+          description: URL or path to the resource
+          example: "https://example.com/advanced-c-programming-guide.pdf"
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the resource
+          example: "789e0123-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          description: The title of the resource
+          example: "C Programming Tutorial PDF"
+        description:
+          type: string
+          description: A description of the resource
+          example: "Complete guide to C programming with examples and exercises"
+        type:
+          type: string
+          description: The type of resource
+          enum:
+            - PDF
+            - VIDEO
+            - LINK
+            - DOCUMENT
+            - IMAGE
+          example: "PDF"
+        url:
+          type: string
+          description: URL or path to the resource
+          example: "https://example.com/c-programming-guide.pdf"
+        courseId:
+          type: string
+          description: The unique identifier of the course this resource belongs to
+          example: "123e4567-e89b-12d3-a456-426614174000"
     AccessToken:
       type: object
       properties:

@@ -35,7 +35,7 @@ export async function createModuleUseCase(
       "You are not allowed to create modules in this course"
     );
 
-  const module = await moduleRepository.create(data);
+  const module = await moduleRepository.create(data, courseId);
 
   return { module };
 }

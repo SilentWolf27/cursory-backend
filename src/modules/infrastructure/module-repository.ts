@@ -15,14 +15,14 @@ const MODULE_SELECT = {
  * Module repository implementation using Prisma
  */
 export const moduleRepository: ModuleRepository = {
-  async create(data: CreateModuleData): Promise<Module> {
+  async create(data: CreateModuleData, courseId: string): Promise<Module> {
     const module = await prisma.module.create({
       data: {
         title: data.title,
         description: data.description,
         order: data.order,
         objectives: data.objectives || [],
-        courseId: data.courseId,
+        courseId,
       },
       select: MODULE_SELECT,
     });

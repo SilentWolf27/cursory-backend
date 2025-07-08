@@ -12,7 +12,6 @@ export interface CreateModuleData {
   description: string;
   order: number;
   objectives?: string[];
-  courseId: string;
 }
 
 export interface UpdateModuleData {
@@ -25,15 +24,19 @@ export interface UpdateModuleData {
 /**
  * Create a new module entity
  * @param data - Module creation data
+ * @param courseId - Course ID
  * @returns Module entity
  */
-export function createModule(data: CreateModuleData): Omit<Module, "id"> {
+export function createModule(
+  data: CreateModuleData,
+  courseId: string
+): Omit<Module, "id"> {
   return {
     title: data.title,
     description: data.description,
     order: data.order,
     objectives: data.objectives || [],
-    courseId: data.courseId,
+    courseId,
   };
 }
 

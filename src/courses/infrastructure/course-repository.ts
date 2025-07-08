@@ -32,6 +32,17 @@ const COURSE_WITH_MODULES_SELECT = {
     },
     orderBy: { order: "asc" },
   },
+  resources: {
+    where: { deletedAt: null },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      url: true,
+      courseId: true,
+    },
+  },
 } as const;
 
 /**
