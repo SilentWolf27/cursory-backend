@@ -17,6 +17,13 @@ export interface CourseRepository {
   findById(id: string): Promise<Course | null>;
 
   /**
+   * Find course by ID with modules
+   * @param id - Course ID
+   * @returns Course with modules or null if not found
+   */
+  findByIdWithModules(id: string): Promise<Course | null>;
+
+  /**
    * Find course by slug
    * @param slug - Course slug
    * @returns Course or null if not found

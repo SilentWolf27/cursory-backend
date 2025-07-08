@@ -1,3 +1,5 @@
+import { Module } from "../../modules/domain/module";
+
 export interface Course {
   id: string;
   title: string;
@@ -6,6 +8,7 @@ export interface Course {
   tags: string[];
   visibility: "PUBLIC" | "PRIVATE";
   userId: string;
+  modules?: Module[];
 }
 
 export interface CreateCourseData {

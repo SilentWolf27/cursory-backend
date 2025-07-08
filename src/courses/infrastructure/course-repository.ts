@@ -12,6 +12,28 @@ const COURSE_SELECT = {
   userId: true,
 } as const;
 
+const COURSE_WITH_MODULES_SELECT = {
+  id: true,
+  title: true,
+  description: true,
+  slug: true,
+  tags: true,
+  visibility: true,
+  userId: true,
+  modules: {
+    where: { deletedAt: null },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      order: true,
+      objectives: true,
+      courseId: true,
+    },
+    orderBy: { order: "asc" },
+  },
+} as const;
+
 /**
  * Course repository implementation using Prisma
  */
@@ -35,6 +57,15 @@ export const courseRepository: CourseRepository = {
     const course = await prisma.course.findFirst({
       where: { id, deletedAt: null },
       select: COURSE_SELECT,
+    });
+    if (!course) return null;
+    return course;
+  },
+
+  async findByIdWithModules(id: string): Promise<Course | null> {
+    const course = await prisma.course.findFirst({
+      where: { id, deletedAt: null },
+      select: COURSE_WITH_MODULES_SELECT,
     });
     if (!course) return null;
     return course;

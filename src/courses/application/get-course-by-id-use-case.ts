@@ -23,7 +23,7 @@ export async function getCourseByIdUseCase(
 ): Promise<GetCourseByIdResponse> {
   const { courseId, userId } = request;
 
-  const course = await courseRepository.findById(courseId);
+  const course = await courseRepository.findByIdWithModules(courseId);
   if (!course) throw ErrorFactory.notFound("Course not found");
 
   if (course.userId !== userId)
