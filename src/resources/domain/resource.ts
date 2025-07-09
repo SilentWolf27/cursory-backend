@@ -38,19 +38,16 @@ export interface UpdateResourceData {
 /**
  * Create a new resource entity
  * @param data - Resource creation data
- * @param courseId - Course ID
- * @returns Resource entity
+ * @returns Resource entity without id and courseId
  */
 export function createResource(
-  data: CreateResourceData,
-  courseId: string
-): Omit<Resource, "id"> {
+  data: CreateResourceData
+): Omit<Resource, "id" | "courseId"> {
   return {
     title: data.title,
     description: data.description,
     type: data.type,
     url: data.url,
-    courseId,
   };
 }
 
