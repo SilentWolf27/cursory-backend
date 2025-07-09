@@ -6,19 +6,19 @@ import {
   handleDeleteResource,
 } from "./resource-controller";
 
-const resourceRouter = Router();
+const router = Router();
 
-resourceRouter.use(authMiddleware);
+router.use(authMiddleware);
 
-resourceRouter.post("/courses/:courseId/resources", handleCreateResource);
+router.post("/courses/:courseId/resources", handleCreateResource);
 
-resourceRouter.put(
+router.put(
   "/courses/:courseId/resources/:resourceId",
   handleUpdateResource
 );
-resourceRouter.delete(
+router.delete(
   "/courses/:courseId/resources/:resourceId",
   handleDeleteResource
 );
 
-export { resourceRouter };
+export { router as resourceRouter };
