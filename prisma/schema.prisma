@@ -64,6 +64,7 @@ model Course {
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     modules Module[]
+    resources Resource[]
 
     @@unique([slug, deletedAt])
     @@map("courses")
@@ -88,8 +89,41 @@ model Module {
     @@map("modules")
 }
 
+// Resource Domain Models
+model Resource {
+    id          String      @id @default(cuid())
+    title       String      @db.VarChar(255)
+    description String      @db.Text
+    type        ResourceType
+    url         String      @db.VarChar(2048)
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    deletedAt   DateTime?
+
+    // Relations
+    courseId String
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+    @@map("resources")
+}
+
 // Course Domain Enums
 enum Visibility {
     PUBLIC
     PRIVATE
+}
+
+// Resource Domain Enums
+enum ResourceType {
+    PDF
+    VIDEO
+    WEBPAGE
+    DOCUMENT
+    PRESENTATION
+    CODE_REPOSITORY
+    BOOK
+    ARTICLE
+    WEBINAR
+    TOOL
+    COURSE_NOTES
 }

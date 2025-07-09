@@ -957,3 +957,163 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /courses/{courseId}/resources:
+    post:
+      summary: Create a new resource
+      description: Create a new resource within a specific course
+      operationId: createResource
+      tags:
+        - resources
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateResource"
+      responses:
+        "201":
+          description: Resource created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "400":
+          description: One or more fields of the request body are missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /courses/{courseId}/resources/{resourceId}:
+    put:
+      summary: Update a resource
+      description: Update an existing resource within a course
+      operationId: updateResource
+      tags:
+        - resources
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the resource
+            example: "789e0123-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateResource"
+      responses:
+        "200":
+          description: Resource updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "400":
+          description: One or more fields of the request body are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course or resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a resource
+      description: Delete a resource from a course
+      operationId: deleteResource
+      tags:
+        - resources
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the resource
+            example: "789e0123-e89b-12d3-a456-426614174000"
+      responses:
+        "204":
+          description: Resource deleted successfully
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course or resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

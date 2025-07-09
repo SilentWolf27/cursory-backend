@@ -79,7 +79,7 @@ export const courseRepository: CourseRepository = {
       select: COURSE_WITH_MODULES_SELECT,
     });
     if (!course) return null;
-    return course;
+    return course as Course;
   },
 
   async findBySlug(slug: string): Promise<Course | null> {
