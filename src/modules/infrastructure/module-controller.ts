@@ -6,10 +6,7 @@ import {
   createModuleUseCase,
   CreateModuleRequest,
 } from "../application/create-module-use-case";
-import {
-  getModuleByIdUseCase,
-  GetModuleByIdRequest,
-} from "../application/get-module-by-id-use-case";
+
 import {
   updateModuleUseCase,
   UpdateModuleRequest,
@@ -57,42 +54,6 @@ export async function handleCreateModule(
   res.status(201).json(module);
 }
 
-/**
- * Get module by ID
- * @param req - Express request object
- * @param res - Express response object
- */
-export async function handleGetModuleById(
-  req: Request,
-  res: Response
-): Promise<void> {
-  const user = req.user as User;
-  const { courseId, moduleId } = req.params;
-
-  if (!courseId) {
-    res.status(400).json({ error: "Course ID is required" });
-    return;
-  }
-
-  if (!moduleId) {
-    res.status(400).json({ error: "Module ID is required" });
-    return;
-  }
-
-  const request: GetModuleByIdRequest = {
-    moduleId,
-    userId: user.id,
-    courseId,
-  };
-
-  const { module } = await getModuleByIdUseCase(
-    request,
-    moduleRepository,
-    courseRepository
-  );
-
-  res.status(200).json(module);
-}
 
 /**
  * Update module by ID
