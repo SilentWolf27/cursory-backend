@@ -22,12 +22,15 @@ import { jwtConfig } from "../../config/environment";
  */
 function setAccessTokenCookie(res: Response, token: string): void {
   const isProduction = process.env["NODE_ENV"] === "production";
+  const origin = res.req?.get("origin") || "";
+  const isLocalhostDev = origin.includes("localhost");
 
   res.cookie("accessToken", token, {
     httpOnly: true,
     secure: isProduction,
     sameSite: "lax",
     maxAge: jwtConfig.accessTokenExpiresIn * 1000,
+    domain: isLocalhostDev ? "localhost" : undefined,
   });
 }
 
@@ -38,12 +41,15 @@ function setAccessTokenCookie(res: Response, token: string): void {
  */
 function setRefreshTokenCookie(res: Response, token: string): void {
   const isProduction = process.env["NODE_ENV"] === "production";
+  const origin = res.req?.get("origin") || "";
+  const isLocalhostDev = origin.includes("localhost");
 
   res.cookie("refreshToken", token, {
     httpOnly: true,
     secure: isProduction,
     sameSite: "lax",
     maxAge: jwtConfig.refreshTokenExpiresIn * 1000,
+    domain: isLocalhostDev ? "localhost" : undefined,
   });
 }
 
