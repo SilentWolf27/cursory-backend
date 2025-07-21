@@ -13,7 +13,7 @@ import {
   revokeRefreshToken,
   findRefreshTokenByToken,
 } from "./refresh-token-repository";
-import { jwtConfig } from "../../config/environment";
+import { jwtConfig, serverConfig } from "../../config/environment";
 
 /**
  * Set access token cookie
@@ -23,7 +23,7 @@ import { jwtConfig } from "../../config/environment";
 function setAccessTokenCookie(res: Response, token: string): void {
   const origin = res.req?.get("origin") || "";
   const isLocalhostDev = origin.includes("localhost");
-  const isProduction = process.env["NODE_ENV"] === "production";
+  const isProduction = serverConfig.nodeEnv === "production";
 
   res.cookie("accessToken", token, {
     httpOnly: true,
@@ -41,7 +41,7 @@ function setAccessTokenCookie(res: Response, token: string): void {
 function setRefreshTokenCookie(res: Response, token: string): void {
   const origin = res.req?.get("origin") || "";
   const isLocalhostDev = origin.includes("localhost");
-  const isProduction = process.env["NODE_ENV"] === "production";
+  const isProduction = serverConfig.nodeEnv === "production";
 
   res.cookie("refreshToken", token, {
     httpOnly: true,
