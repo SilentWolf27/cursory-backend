@@ -21,12 +21,14 @@ import { jwtConfig } from "../../config/environment";
  * @param token - JWT access token
  */
 function setAccessTokenCookie(res: Response, token: string): void {
+  const origin = res.req?.get("origin") || "";
+  const isLocalhostDev = origin.includes("localhost");
   const isProduction = process.env["NODE_ENV"] === "production";
-  
+
   res.cookie("accessToken", token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "lax",
+    sameSite: isLocalhostDev ? "none" : "lax",
     maxAge: jwtConfig.accessTokenExpiresIn * 1000,
   });
 }
@@ -37,12 +39,14 @@ function setAccessTokenCookie(res: Response, token: string): void {
  * @param token - JWT refresh token
  */
 function setRefreshTokenCookie(res: Response, token: string): void {
+  const origin = res.req?.get("origin") || "";
+  const isLocalhostDev = origin.includes("localhost");
   const isProduction = process.env["NODE_ENV"] === "production";
-  
+
   res.cookie("refreshToken", token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "lax",
+    sameSite: isLocalhostDev ? "none" : "lax",
     maxAge: jwtConfig.refreshTokenExpiresIn * 1000,
   });
 }
