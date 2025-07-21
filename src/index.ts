@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { swaggerConfig } from "./config/swagger";
-import { serverConfig } from "./config/environment";
+import { serverConfig, corsConfig } from "./config/environment";
 import * as OpenApiValidator from "express-openapi-validator";
 import path from "path";
 import YAML from "yamljs";
