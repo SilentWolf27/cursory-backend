@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import { swaggerConfig } from "./config/swagger";
 import { serverConfig } from "./config/environment";
 import * as OpenApiValidator from "express-openapi-validator";
@@ -12,6 +13,15 @@ import {
 import { registerRoutes } from "./router";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
