@@ -15,8 +15,8 @@ courseRouter.use(authMiddleware);
 
 courseRouter.post("/", handleCreateCourse);
 courseRouter.get("/", handleGetCourses);
-courseRouter.post("/generate", handleGenerateCourse);
 courseRouter.get("/:id", handleGetCourseById);
+courseRouter.post("/generate", handleGenerateCourse);
 courseRouter.put("/:id", handleUpdateCourse);
 courseRouter.delete("/:id", handleDeleteCourse);
 
