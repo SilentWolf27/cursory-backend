@@ -10,14 +10,14 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.post("/courses/:courseId/resources", handleCreateResource);
+router.post("/:courseId/resources", handleCreateResource);
 
 router.put(
-  "/courses/:courseId/resources/:resourceId",
+  "/:courseId/resources/:resourceId",
   handleUpdateResource
 );
 router.delete(
-  "/courses/:courseId/resources/:resourceId",
+  "/:courseId/resources/:resourceId",
   handleDeleteResource
 );
 

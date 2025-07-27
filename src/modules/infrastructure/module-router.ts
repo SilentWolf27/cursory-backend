@@ -10,10 +10,10 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.post("/courses/:courseId/modules", handleCreateModule);
+router.post("/:courseId/modules", handleCreateModule);
 
-router.put("/courses/:courseId/modules/:moduleId", handleUpdateModule);
+router.put("/:courseId/modules/:moduleId", handleUpdateModule);
 
-router.delete("/courses/:courseId/modules/:moduleId", handleDeleteModule);
+router.delete("/:courseId/modules/:moduleId", handleDeleteModule);
 
 export { router as moduleRouter };

@@ -10,6 +10,6 @@ import { resourceRouter } from "./resources/infrastructure/resource-router";
 export function registerRoutes(app: Express): void {
   app.use("/auth", authRouter);
   app.use("/courses", courseRouter);
-  app.use("/", moduleRouter);
-  app.use("/", resourceRouter);
+  app.use("/courses", moduleRouter);
+  app.use("/courses", resourceRouter);
 }
