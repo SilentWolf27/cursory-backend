@@ -1,6 +1,7 @@
 export interface AIModelConfig {
   apiKey?: string;
   model?: string;
+  temperature?: number;
 }
 
 export interface AIResponse {

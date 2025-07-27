@@ -83,6 +83,17 @@ export function createPromptTemplate(messages: Message[]): ChatPromptTemplate {
   return ChatPromptTemplate.fromMessages(messages);
 }
 
+/**
+ * Create a prompt template from string records
+ * @param messages - Array of [role, content] tuples
+ * @returns ChatPromptTemplate instance
+ */
+export function createPromptTemplateFromRecords(
+  messages: ["system" | "user" | "assistant", string][]
+): ChatPromptTemplate {
+  return ChatPromptTemplate.fromMessages(messages);
+}
+
 export async function invokePromptTemplate(
   model: ChatOpenAI,
   template: ChatPromptTemplate,

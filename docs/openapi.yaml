@@ -633,7 +633,7 @@ paths:
             schema:
               $ref: "#/components/schemas/GenerateCourse"
       responses:
-        "201":
+        "200":
           description: Course generated successfully
           content:
             application/json:
