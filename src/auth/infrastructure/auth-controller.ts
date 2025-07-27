@@ -22,13 +22,15 @@ import { jwtConfig, serverConfig } from "../../config/environment";
  */
 function setAccessTokenCookie(res: Response, token: string): void {
   const origin = res.req?.get("origin") || "";
-  const isLocalhostDev = origin.includes("localhost");
+  const host = res.req?.get("host") || "";
   const isProduction = serverConfig.nodeEnv === "production";
+  const isCrossOrigin = Boolean(origin && origin !== host);
+  const isVercel = origin.includes("vercel.app");
 
   res.cookie("accessToken", token, {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isLocalhostDev ? "none" : "lax",
+    secure: isProduction || isCrossOrigin || isVercel,
+    sameSite: (isCrossOrigin || isVercel) ? "none" : "lax",
     maxAge: jwtConfig.accessTokenExpiresIn * 1000,
   });
 }
@@ -40,13 +42,15 @@ function setAccessTokenCookie(res: Response, token: string): void {
  */
 function setRefreshTokenCookie(res: Response, token: string): void {
   const origin = res.req?.get("origin") || "";
-  const isLocalhostDev = origin.includes("localhost");
+  const host = res.req?.get("host") || "";
   const isProduction = serverConfig.nodeEnv === "production";
+  const isCrossOrigin = Boolean(origin && origin !== host);
+  const isVercel = origin.includes("vercel.app");
 
   res.cookie("refreshToken", token, {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isLocalhostDev ? "none" : "lax",
+    secure: isProduction || isCrossOrigin || isVercel,
+    sameSite: (isCrossOrigin || isVercel) ? "none" : "lax",
     maxAge: jwtConfig.refreshTokenExpiresIn * 1000,
   });
 }
