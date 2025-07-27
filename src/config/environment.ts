@@ -31,7 +31,7 @@ export const jwtConfig = {
 } as const;
 
 export const corsConfig = {
-  origin: CORS_ORIGIN || "http://localhost:3000",
+  origin: CORS_ORIGIN?.split(",") || ["http://localhost:3000"],
 } as const;
 
 export const railwayConfig = {
