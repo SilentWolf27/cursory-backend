@@ -54,6 +54,25 @@ components:
             type: string
             description: A tag for the course used to categorize the course
             example: "embedded"
+    GenerateCourse:
+      type: object
+      required:
+        - description
+        - objective
+        - difficulty
+      properties:
+        description:
+          type: string
+          description: A description of what the course should cover
+          example: "A comprehensive course about robotics and automation"
+        objective:
+          type: string
+          description: The learning objective or goal of the course
+          example: "Learn the fundamentals of robotics programming and control systems"
+        difficulty:
+          type: string
+          description: The difficulty level of the course
+          example: "intermediate"
     UpdateCourse:
       type: object
       properties:
@@ -598,6 +617,40 @@ paths:
                     type: number
                     description: The HTTP status code
                     example: 400
+  /courses/generate:
+    post:
+      summary: Generate a course using AI
+      description: Generate course basic information using AI based on provided description, objective, and difficulty
+      operationId: generateCourse
+      tags:
+        - courses
+      security:
+        - AccessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateCourse"
+      responses:
+        "201":
+          description: Course generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        "400":
+          description: One or more fields of the request body are missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     get:
       summary: Get all courses
       description: Get all courses

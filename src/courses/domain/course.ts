@@ -35,9 +35,7 @@ export interface UpdateCourseData {
  * @param data - Course creation data
  * @returns Course entity
  */
-export function createCourse(
-  data: CreateCourseData
-): Omit<Course, "id"> {
+export function createCourse(data: CreateCourseData): Omit<Course, "id"> {
   return {
     title: data.title,
     description: data.description,

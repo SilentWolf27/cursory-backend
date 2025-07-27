@@ -9,6 +9,8 @@ const {
   JWT_EXPIRES_IN,
   CORS_ORIGIN,
   RAILWAY_STATIC_URL,
+  OPENAI_API_KEY,
+  OPENAI_MODEL,
 } = process.env;
 
 export const serverConfig = {
@@ -34,4 +36,12 @@ export const corsConfig = {
 
 export const railwayConfig = {
   staticUrl: RAILWAY_STATIC_URL || "",
+} as const;
+
+export const aiConfig = {
+  openai: {
+    apiKey: OPENAI_API_KEY,
+    model: OPENAI_MODEL || "gpt-4o-mini",
+  },
+  defaultProvider: "openai" as "openai",
 } as const;

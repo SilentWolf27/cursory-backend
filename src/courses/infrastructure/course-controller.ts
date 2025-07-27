@@ -21,6 +21,10 @@ import {
   deleteCourseUseCase,
   DeleteCourseRequest,
 } from "../application/delete-course-use-case";
+import {
+  generateCourseUseCase,
+  GenerateCourseRequest,
+} from "../application/generate-course-use-case";
 
 /**
  * Create a new course
@@ -159,4 +163,26 @@ export async function handleDeleteCourse(
   await deleteCourseUseCase(request, courseRepository);
 
   res.status(204).send();
+}
+
+/**
+ * Generate course using AI
+ * @param req - Express request object
+ * @param res - Express response object
+ */
+export async function handleGenerateCourse(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { description, objective, difficulty } = req.body;
+
+  const request: GenerateCourseRequest = {
+    description,
+    objective,
+    difficulty,
+  };
+
+  const { course } = await generateCourseUseCase(request);
+
+  res.status(201).json(course);
 }

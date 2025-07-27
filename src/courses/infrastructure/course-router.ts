@@ -6,6 +6,7 @@ import {
   handleGetCourseById,
   handleUpdateCourse,
   handleDeleteCourse,
+  handleGenerateCourse,
 } from "./course-controller";
 
 const courseRouter = Router();
@@ -13,6 +14,7 @@ const courseRouter = Router();
 courseRouter.use(authMiddleware);
 
 courseRouter.post("/", handleCreateCourse);
+courseRouter.post("/generate", handleGenerateCourse);
 courseRouter.get("/", handleGetCourses);
 courseRouter.get("/:id", handleGetCourseById);
 courseRouter.put("/:id", handleUpdateCourse);
