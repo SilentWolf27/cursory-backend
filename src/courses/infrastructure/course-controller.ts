@@ -182,7 +182,7 @@ export async function handleGenerateCourse(
     difficulty,
   };
 
-  const { course } = await generateCourseUseCase(request);
+  const response = await generateCourseUseCase(request);
 
-  res.status(201).json(course);
+  res.status(200).json(response);
 }

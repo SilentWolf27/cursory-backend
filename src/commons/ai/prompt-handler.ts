@@ -1,11 +1,14 @@
 import {
   AIMessage,
+  type AIMessageChunk,
   HumanMessage,
   SystemMessage,
 } from "@langchain/core/messages";
 import type { ChatOpenAI } from "@langchain/openai";
-import { PromptTemplate } from "@langchain/core/prompts";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { handleAIError } from "./error-handler";
+
+type Message = AIMessage | HumanMessage | SystemMessage;
 
 /**
  * Create a LangChain message object for AI interactions
@@ -16,7 +19,7 @@ import { handleAIError } from "./error-handler";
 export function createMessage(
   role: "system" | "user" | "assistant",
   content: string
-): AIMessage | SystemMessage | HumanMessage {
+): Message {
   switch (role) {
     case "system":
       return new SystemMessage(content);
@@ -61,11 +64,9 @@ export function createAssistantMessage(content: string): AIMessage {
  * @returns AI response content
  */
 export async function generateResponse(
-  messages: (AIMessage | HumanMessage | SystemMessage)[],
-  model: ChatOpenAI
+  response: AIMessageChunk
 ): Promise<string> {
   try {
-    const response = await model.invoke(messages);
     return response.content as string;
   } catch (error) {
     throw handleAIError(error);
@@ -78,12 +79,20 @@ export async function generateResponse(
  * @param inputVariables - Array of variable names
  * @returns PromptTemplate instance
  */
-export function createPromptTemplate(
-  template: string,
-  inputVariables: string[]
-): PromptTemplate {
-  return new PromptTemplate({
-    template,
-    inputVariables,
+export function createPromptTemplate(messages: Message[]): ChatPromptTemplate {
+  return ChatPromptTemplate.fromMessages(messages);
+}
+
+export async function invokePromptTemplate(
+  model: ChatOpenAI,
+  template: ChatPromptTemplate,
+  input: Record<string, string>
+): Promise<string> {
+  const response = await template.invoke({
+    ...input,
   });
+
+  const result = await model.invoke(response);
+
+  return generateResponse(result);
 }
