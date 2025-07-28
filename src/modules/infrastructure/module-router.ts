@@ -4,6 +4,8 @@ import {
   handleCreateModule,
   handleUpdateModule,
   handleDeleteModule,
+  handleGenerateModules,
+  handleCreateModulesBulk,
 } from "./module-controller";
 
 const router = Router();
@@ -11,6 +13,8 @@ const router = Router();
 router.use(authMiddleware);
 
 router.post("/:courseId/modules", handleCreateModule);
+router.post("/:courseId/modules/bulk", handleCreateModulesBulk);
+router.post("/:courseId/modules/generate", handleGenerateModules);
 
 router.put("/:courseId/modules/:moduleId", handleUpdateModule);
 

@@ -863,6 +863,191 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /courses/{courseId}/modules/generate:
+    post:
+      summary: Generate modules for a course using AI
+      description: Generate a set of modules for a course using artificial intelligence
+      operationId: generateModules
+      tags:
+        - modules
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - suggestedTopics
+                - numberOfModules
+                - approach
+              properties:
+                suggestedTopics:
+                  type: string
+                  description: Topics to be covered in the modules, separated by commas
+                  example: "ESP32, Arduino, IoT, microcontrollers, sensors"
+                numberOfModules:
+                  type: number
+                  minimum: 1
+                  maximum: 20
+                  description: Number of modules to generate (between 1 and 20)
+                  example: 5
+                approach:
+                  type: string
+                  description: Learning approach for the modules (e.g., practical, theoretical, mixed)
+                  example: "practical"
+      responses:
+        "200":
+          description: Modules generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modules:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          description: Title of the module
+                          example: "Introducción al ESP32"
+                        description:
+                          type: string
+                          description: Description of the module
+                          example: "Este módulo cubre los conceptos básicos del ESP32"
+                        objectives:
+                          type: array
+                          items:
+                            type: string
+                          description: Learning objectives for the module
+                          example: ["Entender la arquitectura del ESP32", "Configurar el entorno de desarrollo"]
+        "400":
+          description: Invalid number of modules or course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /courses/{courseId}/modules/bulk:
+    post:
+      summary: Create multiple modules for a course
+      description: Create multiple modules for a course in a single request
+      operationId: createModulesBulk
+      tags:
+        - modules
+      security:
+        - AccessToken: []
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique identifier of the course
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - modules
+              properties:
+                modules:
+                  type: array
+                  minItems: 1
+                  maxItems: 50
+                  items:
+                    type: object
+                    required:
+                      - title
+                      - description
+                      - order
+                    properties:
+                      title:
+                        type: string
+                        description: Title of the module
+                        example: "Introducción al ESP32"
+                      description:
+                        type: string
+                        description: Description of the module
+                        example: "Este módulo cubre los conceptos básicos del ESP32"
+                      order:
+                        type: number
+                        minimum: 1
+                        description: Order of the module in the course
+                        example: 1
+                      objectives:
+                        type: array
+                        items:
+                          type: string
+                        description: Learning objectives for the module
+                        example: ["Entender la arquitectura del ESP32", "Configurar el entorno de desarrollo"]
+      responses:
+        "201":
+          description: Modules created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  modules:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Module"
+        "400":
+          description: Invalid module data or duplicate orders
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized - Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - User is not the owner of the course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /courses/{courseId}/modules/{moduleId}:
     get:
       summary: Get a module by ID

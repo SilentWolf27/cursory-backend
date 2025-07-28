@@ -1,0 +1,155 @@
+import { ErrorFactory } from "../../commons/error/error-factory";
+import { createModel } from "../../commons/ai/model-handler";
+import { Module } from "../domain/module";
+import { createSimpleChain } from "../../commons/ai/chain-handler";
+import { createPromptTemplateFromRecords } from "../../commons/ai/prompt-handler";
+import {
+  parseJSONFromResponse,
+  validateRequiredFields,
+} from "../../commons/ai/output-parser";
+import type { CourseRepository } from "../../courses/domain/course-repository";
+
+export interface GenerateModulesRequest {
+  courseId: string;
+  suggestedTopics: string;
+  numberOfModules: number;
+  approach: string;
+  userId: string;
+}
+
+export type GeneratedModule = Pick<
+  Module,
+  "title" | "description" | "order" | "objectives"
+>;
+
+/**
+ * Get the system prompt for modules generation
+ * @returns System prompt string
+ */
+function getModulesGenerationSystemPrompt(): string {
+  return `Eres un experto en diseño instruccional y en educación tecnológica. Tu tarea es ayudar a crear módulos de aprendizaje bien estructurados para un curso en la plataforma Cursory.
+
+Debes generar una lista de módulos que cumplan con lo siguiente:
+
+1. **Título del módulo**: claro, específico y relacionado con el contenido del curso.
+2. **Descripción**: explica qué se cubrirá en el módulo y qué aprenderá el estudiante.
+4. **Objetivos**: lista de 2 a 4 objetivos de aprendizaje específicos y medibles que el estudiante logrará.
+
+Los módulos deben:
+
+- Seguir una progresión lógica, comenzando por los conceptos fundamentales y avanzando hacia aplicaciones más complejas.
+- Mantener coherencia con el título, descripción y objetivo general del curso.
+- Adaptarse al enfoque especificado (práctico, teórico, mixto, etc.) si se proporciona, para ajustar el tipo de contenido y redacción de objetivos.
+- Considerar los temas sugeridos, si existen, como guía para el contenido, **sin necesidad de que cada tema se convierta en un módulo separado.**
+
+El tono debe ser técnico, claro y profesional.
+
+  Tu salida debe ser **exclusivamente** un objeto JSON válido con la siguiente estructura:
+
+  {{
+    "modules": [
+      {{
+        "title": "Título del módulo",
+        "description": "Descripción del módulo",
+        "objectives": ["Objetivo 1", "Objetivo 2", "Objetivo 3"]
+      }}
+    ]
+  }}`;
+}
+
+/**
+ * Get the user prompt template for modules generation
+ * @returns User prompt template string
+ */
+function getModulesGenerationUserPrompt(): string {
+  return `Quiero que me ayudes a crear {numeroModulos} módulos para el siguiente curso:
+
+📘 Título del curso: {tituloCurso}
+📝 Descripción: {descripcionCurso}
+
+Aquí hay algunos temas que me gustaría que tomes en cuenta como guía para el contenido (no es necesario que cada uno se convierta en un módulo): {temasSugeridos}
+
+El curso tiene un enfoque {enfoque}, así que adapta los contenidos y objetivos de cada módulo en función de eso.
+
+Por favor, organiza los módulos de manera lógica y progresiva, desde los conceptos fundamentales hasta los más avanzados. Asegúrate de que cada módulo tenga un propósito claro y contribuya al aprendizaje general del curso.
+`;
+}
+
+/**
+ * Generate modules for a course using AI
+ * @param request - Generate modules request
+ * @param courseRepository - Course repository to fetch course information
+ * @returns Generated modules information
+ */
+export async function generateModulesUseCase(
+  request: GenerateModulesRequest,
+  courseRepository: CourseRepository
+): Promise<{ modules: GeneratedModule[] }> {
+  const { courseId, suggestedTopics, numberOfModules, approach, userId } =
+    request;
+
+  const course = await courseRepository.findById(courseId);
+  if (!course) throw ErrorFactory.notFound("Course not found");
+
+  if (course.userId !== userId)
+    throw ErrorFactory.forbidden(
+      "You are not allowed to generate modules for this course"
+    );
+
+  const model = createModel("openai", { temperature: 0.8 });
+  if (!model) throw ErrorFactory.internal("AI model not available");
+
+  const prompt = createPromptTemplateFromRecords([
+    ["system", getModulesGenerationSystemPrompt()],
+    ["user", getModulesGenerationUserPrompt()],
+  ]);
+
+  const chain = createSimpleChain(prompt, model);
+
+  const response = await chain.invoke({
+    tituloCurso: course.title,
+    descripcionCurso: course.description,
+    temasSugeridos: suggestedTopics,
+    enfoque: approach,
+    numeroModulos: numberOfModules,
+  });
+
+  return parseModulesResponse(response);
+}
+
+/**
+ * Parse the AI response into a GeneratedModule array
+ * @param response - Raw AI response string
+ * @returns Parsed modules array
+ */
+function parseModulesResponse(response: string): {
+  modules: GeneratedModule[];
+} {
+  const parsed = parseJSONFromResponse(response);
+  const validated = validateRequiredFields(parsed, ["modules"]);
+
+  if (!Array.isArray(validated.modules)) {
+    throw ErrorFactory.badRequest("Invalid modules format in AI response");
+  }
+
+  const modules: GeneratedModule[] = validated.modules.map(
+    (module: any, index: number) => {
+      const validatedModule = validateRequiredFields(module, [
+        "title",
+        "description",
+        "objectives",
+      ]);
+
+      return {
+        title: validatedModule.title,
+        description: validatedModule.description,
+        order: index + 1,
+        objectives: Array.isArray(validatedModule.objectives)
+          ? validatedModule.objectives
+          : [],
+      };
+    }
+  );
+
+  return { modules };
+}

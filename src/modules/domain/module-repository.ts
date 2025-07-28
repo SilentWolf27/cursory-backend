@@ -10,6 +10,14 @@ export interface ModuleRepository {
   create(data: CreateModuleData, courseId: string): Promise<Module>;
 
   /**
+   * Create multiple modules for a course
+   * @param modules - Array of module creation data
+   * @param courseId - Course ID
+   * @returns Array of created modules
+   */
+  createMany(modules: CreateModuleData[], courseId: string): Promise<Module[]>;
+
+  /**
    * Find module by ID
    * @param id - Module ID
    * @returns Module or null if not found

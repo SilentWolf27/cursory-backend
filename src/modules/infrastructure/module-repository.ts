@@ -29,6 +29,35 @@ export const moduleRepository: ModuleRepository = {
     return module;
   },
 
+  async createMany(
+    modules: CreateModuleData[],
+    courseId: string
+  ): Promise<Module[]> {
+    // Use createMany for bulk insertion
+    await prisma.module.createMany({
+      data: modules.map((module) => ({
+        title: module.title,
+        description: module.description,
+        order: module.order,
+        objectives: module.objectives || [],
+        courseId,
+      })),
+    });
+
+    const createdModules = await prisma.module.findMany({
+      where: {
+        courseId,
+        order: {
+          in: modules.map((m) => m.order),
+        },
+      },
+      select: MODULE_SELECT,
+      orderBy: { order: "asc" },
+    });
+
+    return createdModules;
+  },
+
   async findById(id: string): Promise<Module | null> {
     const module = await prisma.module.findFirst({
       where: { id, deletedAt: null },
