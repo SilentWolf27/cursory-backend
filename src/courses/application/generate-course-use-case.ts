@@ -36,12 +36,8 @@ Debes generar:
 
 - El tono debe ser técnico, claro y profesional.
 - Utiliza lenguaje preciso pero accesible, evitando jergas innecesarias.
-- **Varía la estructura narrativa de la descripción** para evitar repeticiones entre cursos:
-  - Puedes comenzar con una pregunta, una situación, un resultado esperado, una aplicación concreta, una definición breve, etc.
-  - No uses fórmulas repetitivas como “Este curso está diseñado para…” o “Al finalizar, serás capaz de…”.
-  - Cambia el enfoque narrativo según el tema y la utilidad del curso, manteniendo siempre claridad y coherencia.
 
-Evita cualquier lenguaje de venta o promoción exagerada. La redacción debe ser motivadora, sobria y centrada en el aprendizaje.  
+Evita cualquier lenguaje de venta o promoción exagerada.
 La descripción debe explicar a quién está dirigido el curso, qué aprenderán los estudiantes y para qué les servirá, todo de forma concisa y sin usar etiquetas como "básico", "intermedio" o "avanzado".
 
 Tu salida debe ser **exclusivamente** un objeto JSON válido con las siguientes claves: \`title\`, \`description\`, \`slug\`, \`tags\`.`;
