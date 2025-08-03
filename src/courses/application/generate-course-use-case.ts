@@ -33,10 +33,16 @@ Debes generar:
 3. Slug: una versión URL amigable del título (en minúsculas, sin espacios ni caracteres especiales).  
 4. Tags sugeridos: una lista de 3 a 6 etiquetas relevantes al contenido del curso.  
 
-El tono debe ser técnico, claro y profesional. Utiliza lenguaje preciso pero accesible, evitando jergas innecesarias.  
-No utilices palabras como "básico", "intermedio" o "avanzado" en el título ni en la descripción.  
+
+- El tono debe ser técnico, claro y profesional.
+- Utiliza lenguaje preciso pero accesible, evitando jergas innecesarias.
+- **Varía la estructura narrativa de la descripción** para evitar repeticiones entre cursos:
+  - Puedes comenzar con una pregunta, una situación, un resultado esperado, una aplicación concreta, una definición breve, etc.
+  - No uses fórmulas repetitivas como “Este curso está diseñado para…” o “Al finalizar, serás capaz de…”.
+  - Cambia el enfoque narrativo según el tema y la utilidad del curso, manteniendo siempre claridad y coherencia.
+
 Evita cualquier lenguaje de venta o promoción exagerada. La redacción debe ser motivadora, sobria y centrada en el aprendizaje.  
-La descripción debe explicar a quién está dirigido el curso, qué aprenderán los estudiantes y para qué les servirá, todo de forma concisa.
+La descripción debe explicar a quién está dirigido el curso, qué aprenderán los estudiantes y para qué les servirá, todo de forma concisa y sin usar etiquetas como "básico", "intermedio" o "avanzado".
 
 Tu salida debe ser **exclusivamente** un objeto JSON válido con las siguientes claves: \`title\`, \`description\`, \`slug\`, \`tags\`.`;
 }
@@ -61,7 +67,7 @@ export async function generateCourseUseCase(
 ): Promise<GeneratedCourse> {
   const { description, objective, difficulty } = request;
 
-  const model = createModel("openai", { temperature: 0.8 });
+  const model = createModel("openai", { temperature: 1 });
   if (!model) throw ErrorFactory.internal("AI model not available");
 
   const prompt = createPromptTemplateFromRecords([
@@ -112,17 +118,48 @@ export function getCourseGenerationFewShotExamples(): [
     [
       "user",
       `Quiero crear un curso sobre "Curso básico de esp32 en arduino".
-  Está dirigido a estudiantes de nivel básico.
-  Al finalizar, los participantes deberían poder: configurar y utilizar los principales periféricos de la tarjeta esp32 en el entorno arduino.`,
+Está dirigido a estudiantes de nivel básico.
+Al finalizar, los participantes deberían poder: configurar y utilizar los principales periféricos de la tarjeta esp32 en el entorno arduino.`,
     ],
     [
       "assistant",
-      `{{
+      `{
   "title": "Introducción al ESP32 con Arduino",
   "description": "Este curso está orientado a personas que desean iniciarse en el desarrollo de proyectos embebidos utilizando el ESP32. Aprenderás a configurar el entorno Arduino y a utilizar los principales periféricos del microcontrolador, incluyendo entradas y salidas digitales, PWM, comunicación UART, y funcionalidades de conectividad como WiFi. El curso combina teoría práctica y te permitirá crear tus primeros prototipos funcionales.",
   "slug": "introduccion-esp32-arduino",
   "tags": ["ESP32", "Arduino", "desarrollo embebido", "IoT", "microcontroladores", "periféricos"]
-}}`,
+}`,
     ],
+    [
+      "user",
+      `Quiero crear un curso sobre "Fundamentos de LangChain para trabajar con LLMs".
+Está dirigido a estudiantes de nivel intermedio.
+Al finalizar, los participantes deberían poder: construir cadenas básicas de procesamiento con LangChain e integrarlas en aplicaciones de lenguaje natural.`,
+    ],
+    [
+      "assistant",
+      `{
+  "title": "Fundamentos de LangChain para modelos de lenguaje",
+  "description": "LangChain es una herramienta que permite estructurar flujos conversacionales con modelos de lenguaje como GPT. Este curso introduce sus principales componentes: cadenas, agentes y herramientas de memoria, proporcionando las bases para construir aplicaciones NLP personalizadas.",
+  "slug": "fundamentos-langchain-llm",
+  "tags": ["LangChain", "LLM", "NLP", "procesamiento de lenguaje", "Python", "aplicaciones inteligentes"]
+}`,
+    ],
+    [
+      "user",
+      `Quiero crear un curso sobre "Diseño de prompts y uso de la API de OpenAI".
+Está dirigido a estudiantes de nivel intermedio.
+Al finalizar, los participantes deberían poder: diseñar prompts eficaces e integrar modelos de lenguaje en sus aplicaciones usando la API de OpenAI.`,
+    ],
+    [
+      "assistant",
+      `{
+  "title": "Diseño de Prompts y uso de la API de OpenAI",
+  "description": "¿Cómo lograr que un modelo de lenguaje te dé exactamente lo que necesitas? Este curso explora los principios del prompt engineering y te guía paso a paso en la integración de la API de OpenAI usando Python. Ideal para quienes desean potenciar sus proyectos con capacidades avanzadas de lenguaje natural.",
+  "slug": "diseno-prompts-openai-api",
+  "tags": ["OpenAI", "prompts", "API", "modelo de lenguaje", "NLP", "Python"]
+}`,
+    ]
   ];
 }
+
