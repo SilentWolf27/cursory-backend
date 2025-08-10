@@ -41,6 +41,7 @@
     "express-openapi-validator": "^5.5.7",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^0.3.30",
+    "openai": "^5.12.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "prisma": "^6.11.1",
