@@ -99,7 +99,13 @@ Por favor, organiza los módulos de manera lógica y progresiva, desde los conce
       responseFormat: "json_object",
     });
 
-    return JSON.parse(response) as { modules: GeneratedModule[] };
+    const modules = JSON.parse(response) as GeneratedModule[];
+
+    modules.forEach((module, index) => {
+      module.order = index + 1;
+    });
+
+    return { modules };
   } catch (error) {
     throw ErrorFactory.internal(`AI generation failed: ${error}`);
   }
